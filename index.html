@@ -5,8 +5,67 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+    *{
+      border: 1px dotted red;
+      box-sizing: border-box;
+    }
+    #root{
+      margin: auto;
+      width: 250px;
+      height: 750px;
+    }
+  </style>
 </head>
 <body>
-  
+  <div id="root">
+  </div>
+  <script>
+    let root = document.getElementById("root");
+    for(let bowlI = 0; bowlI < 30; bowlI ++){
+      let bowl = document.createElement("div");
+      bowl.style.height = "25px";
+      bowl.style.width = "250px";
+      bowl.style.display = "flex"
+      root.appendChild(bowl)
+      for(let pixI = 0;pixI <10;pixI ++){
+        let pix = document.createElement("div");
+        pix.style.height = "25px";
+        pix.style.width = "25px";
+        bowl.appendChild(pix)
+      }
+    }
+    let block = document.createElement("div");
+    block.style.width = "100%";
+    block.style.height = "100%";
+    block.style.backgroundColor = "orange";
+    root.children[0].children[4].appendChild(block)
+    let cnt = 0;
+    let loca = 4; 
+    let moving = setInterval(()=>{
+      if(cnt<30){
+        root.children[cnt].children[loca].insertBefore(block,null)
+        cnt ++
+      }else{
+        clearInterval(moving)
+      }
+      
+      console.log(cnt,loca)
+    },1000)
+    window.addEventListener("keydown", (e)=>{
+
+      if(e.key === "ArrowRight" && loca < 9){
+        loca ++;
+        root.children[cnt].children[loca].insertBefore(block,null);
+        
+      } else if(e.key === "ArrowLeft" && loca > 0){
+        loca --;
+        root.children[cnt].children[loca].insertBefore(block,null);
+      }else if(e.key === "ArrowDown" && cnt<30){
+        cnt ++;
+        root.children[cnt].children[loca].insertBefore(block,null);
+      }
+    });
+  </script>
 </body>
 </html>
