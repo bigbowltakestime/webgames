@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *{
+      border: 1px dotted red;
+      box-sizing: border-box;
+    }
+    #root{
+      margin: auto;
+      width: 250px;
+      height: 750px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+  </div>
+  <script>
+    let root = document.getElementById("root");
+    let squre = [[0,0],[0,1],[1,0],[1,1]];
+    let l = [[0,0],[1,0],[2,0],[2,1]]
+    for(let bowlI = 0; bowlI < 30; bowlI ++){
+      let bowl = document.createElement("div");
+      bowl.style.height = "25px";
+      bowl.style.width = "250px";
+      bowl.style.display = "flex"
+      root.appendChild(bowl)
+      for(let pixI = 0;pixI <10;pixI ++){
+        let pix = document.createElement("div");
+        pix.style.height = "25px";
+        pix.style.width = "25px";
+        bowl.appendChild(pix)
+      }
+    }
+    
+    function bricSet(bric,position){
+      let nowblock = [];
+      for(let i = 0; i < bric.length;i++){
+        let block = document.createElement("div");
+        block.style.width = "100%";
+        block.style.height = "100%";
+        block.style.backgroundColor = "orange";
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].appendChild(block)
+        nowblock.push(block)
+      }
+      return nowblock;
+    }
+    function goDown(bric,position){
+      position[0] ++;
+      for(let i = 0; i < movingblock.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      }
+    }
+    function goLeft(bric,position){
+      position[1] --;
+      for(let i = 0; i < movingblock.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      }
+    }
+    function goRight(bric,position){
+      position[1] ++;
+      for(let i = 0; i < movingblock.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      }
+    }
+
+    let startPosi = [0,4];
+    let movingblock = bricSet(l,startPosi);
+    // bricSet(squre,startPosi)
+    // goDown(squre,startPosi)
+    // setInterval( ()=>{
+    // goDown(squre,startPosi)
+    let drop = setInterval(()=>{
+      if(startPosi[0]<28){
+        goDown(l,startPosi)
+      }else{
+        clearInterval(drop)
+      }
+    }
+      ,900
+    )
+    window.addEventListener("keydown", (e)=>{
+
+    if(e.key === "ArrowRight" &&  startPosi[1] < 8 && startPosi[0]<28){
+      goRight(l,startPosi);
+
+    } else if(e.key === "ArrowLeft" && startPosi[1] > 0 && startPosi[0]<28){
+      goLeft(l,startPosi);
+    }else if(e.key === "ArrowDown" && startPosi[0]<28){
+      goDown(l,startPosi);
+    }
+    });
+    // },1000 )
+    // function setPosition(obj){
+      // for(let arrIndex = 0;arrIndex<obj.length;arrIndex++){
+        // root.children[startPosi[0] + obj[arrIndex][0]].children[startPosi[1] + obj[arrIndex][1]]. insertBefore(obj[arrIndex],null)
+      // }
+    // }
+
+    // setPosition(nowblock)
+  </script>
+</body>
+</html>
