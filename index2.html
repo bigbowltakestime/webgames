@@ -14,6 +14,7 @@
       margin: auto;
       width: 250px;
       height: 750px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -21,11 +22,23 @@
   <div id="root">
   </div>
   <script>
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min
+    }
     let root = document.getElementById("root");
     let squre = [[0,0],[0,1],[1,0],[1,1]];
-    let l = [[0,0],[1,0],[2,0],[2,1]]
-    let middle = [[0,0],[1,0],[2,0],[1,1]]
-    let bar = [[0,0],[1,0],[2,0],[3,0]]
+    // let l = [[0,0],[1,0],[2,0],[2,1]]
+    // let middle = [[0,0],[1,0],[2,0],[1,1]]
+    // let bar = [[0,0],[1,0],[2,0],[3,0]]
+    let blockName = ["squre","l","middle","bar"];
+    let blockObject = {
+      "squre" : [[0,0],[0,1],[1,0],[1,1]],
+      "l" : [[0,0],[1,0],[2,0],[2,1]],
+      "middle" : [[0,0],[1,0],[1,1],[2,0]],
+      "bar" : [[0,0],[1,0],[2,0],[3,0]]
+    };
     for(let bowlI = 0; bowlI < 30; bowlI ++){
       let bowl = document.createElement("div");
       bowl.style.height = "25px";
@@ -52,66 +65,103 @@
       }
       return nowblock;
     }
-    function goDown(bric,position){
+    function goDown(target,bric,position){
       position[0] ++;
-      for(let i = 0; i < movingblock.length;i++){
-        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      for(let i = 0; i < target.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(target[i], null)
       }
     }
-    function goLeft(bric,position){
+    function goLeft(target,bric,position){
       position[1] --;
-      for(let i = 0; i < movingblock.length;i++){
-        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      for(let i = 0; i < target.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(target[i], null)
       }
     }
-    function goRight(bric,position){
+    function goRight(target,bric,position){
       position[1] ++;
-      for(let i = 0; i < movingblock.length;i++){
-        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
+      for(let i = 0; i < target.length;i++){
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(target[i], null)
       }
     }
-    let thisShape = l;
-    let startPosi = [0,4];
-    let movingblock = bricSet(thisShape,startPosi);
+    
+    function goDownCheck(target,bric,position){
+      for(let i = 0; i < target.length;i++){
+        if(root.children[position[0] + bric[i][0] + 1].children[position[1] + bric[i][1]].children.length>1){
+          console.log("물체감지");
+          console.log(root.children[position[0] + bric[i][0] + 1].children[position[1] + bric[i][1]])
+          return true;
+        }
+      }
+      return false;
+    }
+    function goLeftCheck(target,bric,position){
+      for(let i = 0; i < target.length;i++){
+        if(root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1] - 1].children.length>1){
+          console.log("물체감지");
+          console.log(root.children[position[0] + bric[i][0] + 1].children[position[1] + bric[i][1]])
+          return true;
+        }
+      }
+      return false;
+    }
+    function goRightCheck(target,bric,position){
+      for(let i = 0; i < target.length;i++){
+        if(root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1] + 1].children.length>1){
+          console.log("물체감지");
+          return true;
+        }
+      }
+      return false;
+    }
+
+
+
+
+
+
+    function grave(target,bric,position){
+      for(let i = 0; i < target.length;i++){
+        let ul = document.createElement("ui")
+        root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].appendChild(ul)
+      }
+    };
 
     // bricSet(squre,startPosi)
     // goDown(squre,startPosi)
     // setInterval( ()=>{
     // goDown(squre,startPosi)
+    let movingblock
+    let startPosi = [0,4];
+    let thisShape = squre;
     function dropping(){
 
+      thisShape = blockObject[blockName[getRandomInt(0, blockName.length)]];
+      startPosi = [0,4];
+      movingblock = bricSet(thisShape,startPosi);
+
       let drop = setInterval(()=>{
-        if(startPosi[0]<28){
-          goDown(thisShape,startPosi)
+        if(startPosi[0]<29 - thisShape[3][0] && !goDownCheck(movingblock,thisShape,startPosi)){
+          goDown(movingblock,thisShape,startPosi)
         }else{
           clearInterval(drop)
+          grave(movingblock,thisShape,startPosi)
           dropping()
-        }
-      }
-        ,900
-      )
+        }},900)
     }
     dropping()
 
     window.addEventListener("keydown", (e)=>{
 
-    if(e.key === "ArrowRight" &&  startPosi[1] < 8 && startPosi[0]<28){
-      goRight(thisShape,startPosi);
+    if(e.key === "ArrowRight" &&  startPosi[1] < 8 && startPosi[0]<28 && !goRightCheck(movingblock,thisShape,startPosi)){
+      goRight(movingblock,thisShape,startPosi);
 
-    } else if(e.key === "ArrowLeft" && startPosi[1] > 0 && startPosi[0]<28){
-      goLeft(thisShape,startPosi);
-    }else if(e.key === "ArrowDown" && startPosi[0]<28){
-      goDown(thisShape,startPosi);
+    }else if(e.key === "ArrowLeft" && startPosi[1] > 0 && startPosi[0]<28 && !goLeftCheck(movingblock,thisShape,startPosi)){
+      goLeft(movingblock,thisShape,startPosi);
+    }else if(e.key === "ArrowDown" && startPosi[0]<28 && !goDownCheck(movingblock,thisShape,startPosi)){
+      goDown(movingblock,thisShape,startPosi);
     }
     });
-    // },1000 )
-    // function setPosition(obj){
-      // for(let arrIndex = 0;arrIndex<obj.length;arrIndex++){
-        // root.children[startPosi[0] + obj[arrIndex][0]].children[startPosi[1] + obj[arrIndex][1]]. insertBefore(obj[arrIndex],null)
-      // }
-    // }
 
-    // setPosition(nowblock)
   </script>
 </body>
 </html>
