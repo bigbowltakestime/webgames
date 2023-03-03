@@ -24,6 +24,8 @@
     let root = document.getElementById("root");
     let squre = [[0,0],[0,1],[1,0],[1,1]];
     let l = [[0,0],[1,0],[2,0],[2,1]]
+    let middle = [[0,0],[1,0],[2,0],[1,1]]
+    let bar = [[0,0],[1,0],[2,0],[3,0]]
     for(let bowlI = 0; bowlI < 30; bowlI ++){
       let bowl = document.createElement("div");
       bowl.style.height = "25px";
@@ -68,31 +70,38 @@
         root.children[position[0] + bric[i][0]].children[position[1] + bric[i][1]].insertBefore(movingblock[i], null)
       }
     }
-
+    let thisShape = l;
     let startPosi = [0,4];
-    let movingblock = bricSet(l,startPosi);
+    let movingblock = bricSet(thisShape,startPosi);
+
     // bricSet(squre,startPosi)
     // goDown(squre,startPosi)
     // setInterval( ()=>{
     // goDown(squre,startPosi)
-    let drop = setInterval(()=>{
-      if(startPosi[0]<28){
-        goDown(l,startPosi)
-      }else{
-        clearInterval(drop)
+    function dropping(){
+
+      let drop = setInterval(()=>{
+        if(startPosi[0]<28){
+          goDown(thisShape,startPosi)
+        }else{
+          clearInterval(drop)
+          dropping()
+        }
       }
+        ,900
+      )
     }
-      ,900
-    )
+    dropping()
+
     window.addEventListener("keydown", (e)=>{
 
     if(e.key === "ArrowRight" &&  startPosi[1] < 8 && startPosi[0]<28){
-      goRight(l,startPosi);
+      goRight(thisShape,startPosi);
 
     } else if(e.key === "ArrowLeft" && startPosi[1] > 0 && startPosi[0]<28){
-      goLeft(l,startPosi);
+      goLeft(thisShape,startPosi);
     }else if(e.key === "ArrowDown" && startPosi[0]<28){
-      goDown(l,startPosi);
+      goDown(thisShape,startPosi);
     }
     });
     // },1000 )
